@@ -1,0 +1,69 @@
+---
+title: "Eurovision explorer"
+author: "Victoria"
+date: "2026-05-16"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Eurovision Explorer
+
+An overview of Eurovision performers, songs, and results.
+
+## What is Eurovision?
+
+The Eurovision Song Contest is an international music competition held annually since 1956.
+
+The dataset contains:
+
+- countries
+- performers
+- songs
+- contest rankings
+- YouTube links
+
+## Eurovision winners in 2000
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+
+contestants <- read.csv(
+"https://github.com/Spijkervet/eurovision-dataset/releases/download/2020.0/contestants.csv?raw=true"
+)
+
+contestants %>%
+  filter(place_contest %in% c(1, 2, 3), year == 2000) %>%
+  select(place_contest,to_country, performer, song) %>%
+  knitr::kable()
+```
+
+## Top Eurovision scores in 2000
+
+```{r code2}
+library(ggplot2)
+library(dplyr)
+
+participants2000 <- contestants %>%
+  filter(year == 2000) %>%
+  arrange(desc(points_final))
+
+ggplot(participants2000,
+       aes(x = points_final,
+           y = reorder(to_country, points_final))) +
+  geom_col(fill = "navy") +
+  coord_flip() +
+  labs(
+    title = "Top Eurovision Scores in 2000",
+    x = "Points",
+    y = "Country"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+  )
+```
